@@ -1,55 +1,34 @@
 import React, { useState , useRef, useEffect} from "react";
 import Raidpicker from "./Raidpicker";
 import { v4 as uuidv4 } from 'uuid';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-const LOCAL_STORAGE_KEY = 'raidApp.raids'
 
 function App() {
-  const [raids, addRaids, showRaids] = useState([]);
-  const raidRef = useRef();
+  const [raids, addRaids,] = useState([{id:uuidv4() , name: 'Kingsfall'},{id:uuidv4() , name: 'Vow of the Disciple'},{id:uuidv4() , name: 'Deep Stone Crypt'},{id:uuidv4() , name: 'Last Wish'},{id:uuidv4() , name: 'Garden of Salvation'},{id:uuidv4() , name: 'Vault of Glass'}]);
 
-  useEffect(() => {
-    const storedRaids = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY))
-    addRaids(prevRaids => [...prevRaids,...storedRaids])
-  }, [])
 
-  useEffect(() =>{
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(raids))
-  }, [raids])
-
-  function handleAddRaid(e) {
-    const raid = raidRef.current.value
-    if( raid === '') return console.error('invalid Name');
-    addRaids( prevRaids =>{
-      return [...prevRaids, {id: uuidv4(), name: raid }]
-    })
-    raidRef.current.value = null
-  }
 
   function handleChooseRaid(){
+    let chosenRaid = raids[getRandomInt(raids.length)]
       addRaids(prevRaids =>{
-        return [raids[getRandomInt(raids.length)]]
+        return [...prevRaids]
       }) 
+      toast(chosenRaid.name)
   }
 
   function getRandomInt(max){
     return Math.floor(Math.random() * max)
   }
 
-  function clearRaids(){
-    addRaids( prevRaids =>{
-      return []
-    })
-  }
 
   return (
-    <>
+    <div>
     <Raidpicker raids = { raids } />
-    <input ref={raidRef} type = 'text'></input>
-    <button onClick={handleAddRaid}>add raid</button>
-    <button onClick={handleChooseRaid}>chooseraid</button>
-    <button onClick={clearRaids}>clearRaids</button>
-    </>
+    <button onClick={handleChooseRaid}>choose Raid</button>
+    <ToastContainer/>
+    </div>
   )
 }
 
